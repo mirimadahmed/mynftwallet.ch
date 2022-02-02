@@ -1,12 +1,19 @@
 <template>
   <div id="app">
     <div id="nav">
-      <template v-if="isAuthenticated && user">
-        {{ address }} <button @click="logout">Logout</button>
-      </template>
-      <template v-else>
-        <button @click="login">Connect wallet</button>
-      </template>
+      <b-navbar toggleable="lg" type="dark" variant="info">
+        <b-navbar-brand class="ms-3"> mynftwallet.ch </b-navbar-brand>
+        <template v-if="isAuthenticated && user">
+          <b-button class="ms-auto mr-5" @click="logout"
+            >{{ address }}... Logout</b-button
+          >
+        </template>
+        <template v-else>
+          <b-button class="ms-auto mr-5" @click="login"
+            >Connect wallet</b-button
+          >
+        </template>
+      </b-navbar>
     </div>
     <router-view />
   </div>
@@ -21,7 +28,9 @@ export default {
       return this.$store.state.user;
     },
     address() {
-      return this.$store.state.user ? this.$store.state.user.ethAddress : null;
+      return this.$store.state.user
+        ? this.$store.state.user.ethAddress.substr(0, 8)
+        : null;
     },
   },
   methods: {
@@ -40,7 +49,8 @@ export default {
     handleCurrentUser() {
       const user = this.$moralis.User.current();
       if (user) {
-        this.setUser(user);
+        this.setUser({ ethAddress: user.get("ethAddress"), ...user });
+        this.$router.push(`/${user.get("ethAddress")}`);
       }
     },
   },
@@ -50,24 +60,4 @@ export default {
 };
 </script>
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>
