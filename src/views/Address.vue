@@ -5,6 +5,7 @@
 </template>
 <script>
 import Moralis from "moralis";
+import axios from "axios";
 const chains = ["eth", "bsc", "matic", "avalanche", "fantom"];
 export default {
   name: "addressbalance",
@@ -21,8 +22,18 @@ export default {
       chains.forEach((chain) => {
         const options = { chain: chain, address: this.$route.params.address };
         Moralis.Web3API.account.getNFTs(options).then((res) => {
-          console.log(res);
-          this.$store.commit("setNFTs", { nfts: res.result, chain: chain });
+          const promises = [];
+          res.result.forEach((nft) => {
+            promises.push(
+              axios.get(nft.token_uri).then((res) => {
+                nft.data = res.data;
+                console.log(res.data);
+              })
+            );
+          });
+          Promise.all(promises).then(() => {
+            this.$store.commit("setNFTs", { nfts: res.result, chain: chain });
+          });
         });
       });
     },
