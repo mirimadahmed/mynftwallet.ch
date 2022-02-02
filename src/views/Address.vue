@@ -9,7 +9,12 @@
     <div class="row m-0 p-5">
       <b-tabs content-class="mt-3 text-center" justified>
         <template v-for="(chain, index) in chains">
-          <b-tab v-if="nfts[chain].length > 0" :title="getChainTitle(chain)" :active="index === 0" :key="chain">
+          <b-tab
+            v-if="nfts[chain].length > 0"
+            :title="getChainTitle(chain)"
+            :active="index === 0"
+            :key="chain"
+          >
             <div class="row">
               <div
                 class="col-md-3"
@@ -31,14 +36,30 @@
                   <b-card-text>
                     {{ nft.data.description }}
                   </b-card-text>
-                  <b-badge
-                    v-for="(attribute, index) in nft.data.properties"
-                    :key="index"
-                    variant="primary"
-                    badge-variant="light"
-                    pill
-                    >{{ attribute.value }}</b-badge
-                  >
+                  <template v-for="(attribute, index) in nft.data.properties">
+                    <b-badge
+                      v-if="attribute.trait_type"
+                      :key="index"
+                      variant="primary"
+                      style="background: blue"
+                      class="m-1"
+                      pill
+                    >
+                      {{ attribute.trait_type }} {{ attribute.value }}
+                    </b-badge>
+                  </template>
+                  <template v-for="(attribute, index) in nft.data.attributes">
+                    <b-badge
+                      v-if="attribute.trait_type"
+                      :key="index"
+                      variant="primary"
+                      style="background: blue"
+                      class="m-1"
+                      pill
+                    >
+                      {{ attribute.trait_type }} {{ attribute.value }}
+                    </b-badge>
+                  </template>
                 </b-card>
               </div>
             </div>
@@ -66,12 +87,12 @@ export default {
     return {
       chains: chains,
       chainTitles: {
-        "eth": "Ethereum",
-        "bsc": "Binance Smart Chain",
-        "matic": "Matic",
-        "avalanche": "Avalanche",
-        "fantom": "Fantom",
-      }
+        eth: "Ethereum",
+        bsc: "Binance Smart Chain",
+        matic: "Matic",
+        avalanche: "Avalanche",
+        fantom: "Fantom",
+      },
     };
   },
   methods: {
@@ -82,14 +103,22 @@ export default {
           const promises = [];
           res.result.forEach((nft) => {
             promises.push(
-              axios.get(nft.token_uri).then((res) => {
-                nft.data = res.data;
-              }).then(() =>{
-                const options = { address: nft.token_address, chain: chain };
-                return Moralis.Web3API.token.getNFTLowestPrice(options).then(nftPrice => {
-                  nft.price = nftPrice.result;
-                });
-              })
+              axios
+                .get(nft.token_uri)
+                .then((res) => {
+                  nft.data = res.data;
+                })
+                .then(() => {
+                  const options = { address: nft.token_address, chain: chain };
+                  return Moralis.Web3API.token
+                    .getNFTLowestPrice(options)
+                    .then((nftPrice) => {
+                      nft.price = nftPrice.result;
+                    })
+                    .catch((e) => {
+                      console.log(e);
+                    });
+                })
             );
           });
           Promise.all(promises).then(() => {
@@ -121,7 +150,7 @@ export default {
     },
     getChainTitle(chain) {
       return this.chainTitles[chain];
-    }
+    },
   },
 };
 </script>
