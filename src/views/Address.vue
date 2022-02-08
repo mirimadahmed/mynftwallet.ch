@@ -16,52 +16,50 @@
             :key="chain"
           >
             <div class="row">
-              <div
-                class="col-md-3"
-                v-for="nft in nfts[chain]"
-                :key="nft.token_id"
-              >
-                <b-card
-                  :title="nft.data.name"
-                  :img-src="getNFTImage(nft)"
-                  :img-alt="nft.data.name"
-                  img-top
-                  border-variant="primary"
-                  header-bg-variant="primary"
-                  header-text-variant="white"
-                  align="center"
-                  tag="article"
-                  class="mb-2 shadow"
-                >
-                  <b-card-text>
-                    {{ nft.data.description }}
-                  </b-card-text>
-                  <template v-for="(attribute, index) in nft.data.properties">
-                    <b-badge
-                      v-if="attribute.trait_type"
-                      :key="index"
-                      variant="primary"
-                      style="background: blue"
-                      class="m-1"
-                      pill
-                    >
-                      {{ attribute.trait_type }} {{ attribute.value }}
-                    </b-badge>
-                  </template>
-                  <template v-for="(attribute, index) in nft.data.attributes">
-                    <b-badge
-                      v-if="attribute.trait_type"
-                      :key="index"
-                      variant="primary"
-                      style="background: blue"
-                      class="m-1"
-                      pill
-                    >
-                      {{ attribute.trait_type }} {{ attribute.value }}
-                    </b-badge>
-                  </template>
-                </b-card>
-              </div>
+              <template v-for="nft in nfts[chain]">
+                <div class="col-md-3" :key="nft.token_id" v-if="nft.data">
+                  <b-card
+                    :title="nft.data && nft.data.name"
+                    :img-src="getNFTImage(nft)"
+                    :img-alt="nft.data && nft.data.name"
+                    img-top
+                    border-variant="primary"
+                    header-bg-variant="primary"
+                    header-text-variant="white"
+                    align="center"
+                    tag="article"
+                    class="mb-2 shadow"
+                  >
+                    <b-card-text>
+                      {{ nft.data.description }}
+                    </b-card-text>
+                    <template v-for="(attribute, index) in nft.data.properties">
+                      <b-badge
+                        v-if="attribute.trait_type"
+                        :key="index"
+                        variant="primary"
+                        style="background: blue"
+                        class="m-1"
+                        pill
+                      >
+                        {{ attribute.trait_type }} {{ attribute.value }}
+                      </b-badge>
+                    </template>
+                    <template v-for="(attribute, index) in nft.data.attributes">
+                      <b-badge
+                        v-if="attribute.trait_type"
+                        :key="index"
+                        variant="primary"
+                        style="background: blue"
+                        class="m-1"
+                        pill
+                      >
+                        {{ attribute.trait_type }} {{ attribute.value }}
+                      </b-badge>
+                    </template>
+                  </b-card>
+                </div>
+              </template>
             </div>
           </b-tab>
         </template>
@@ -102,24 +100,34 @@ export default {
         Moralis.Web3API.account.getNFTs(options).then((res) => {
           const promises = [];
           res.result.forEach((nft) => {
-            promises.push(
-              axios
-                .get(nft.token_uri)
-                .then((res) => {
+            if (nft.token_uri !== null) {
+              promises.push(
+                axios.get(nft.token_uri).then((res) => {
                   nft.data = res.data;
                 })
-                .then(() => {
-                  const options = { address: nft.token_address, chain: chain };
-                  return Moralis.Web3API.token
-                    .getNFTLowestPrice(options)
-                    .then((nftPrice) => {
-                      nft.price = nftPrice.result;
-                    })
-                    .catch((e) => {
-                      console.log(e);
-                    });
-                })
-            );
+              );
+            }
+            // promises.push(
+            //   axios
+            //     .get(nft.token_uri)
+            //     .then((res) => {
+            //       nft.data = res.data;
+            //     })
+            //     // .then(() => {
+            //     //   const options = { address: nft.token_address, chain: chain };
+            //     //   return Moralis.Web3API.token
+            //     //     .getNFTLowestPrice(options)
+            //     //     .then((nftPrice) => {
+            //     //       nft.price = nftPrice.result;
+            //     //     })
+            //     //     .catch((e) => {
+            //     //       console.log(e);
+            //     //     });
+            //     // })
+            //     // .catch((e) => {
+            //     //   console.log(e);
+            //     // })
+            // );
           });
           Promise.all(promises).then(() => {
             this.$store.commit("setNFTs", { nfts: res.result, chain: chain });
@@ -128,23 +136,25 @@ export default {
       });
     },
     getNFTImage(nft) {
-      if (nft.data.image) {
-        if (nft.data.image.includes("ipfs://")) {
-          return nft.data.image.replace(
-            "ipfs://",
-            "https://ipfs.moralis.io:2053/ipfs/"
-          );
-        } else {
-          return nft.data.image;
-        }
-      } else if (nft.data.image_url) {
-        if (nft.data.image_url.includes("ipfs://")) {
-          return nft.data.image_url.replace(
-            "ipfs://",
-            "https://ipfs.moralis.io:2053/ipfs/"
-          );
-        } else {
-          return nft.data.image_url;
+      if (nft.data) {
+        if (nft.data.image) {
+          if (nft.data.image.includes("ipfs://")) {
+            return nft.data.image.replace(
+              "ipfs://",
+              "https://ipfs.moralis.io:2053/ipfs/"
+            );
+          } else {
+            return nft.data.image;
+          }
+        } else if (nft.data.image_url) {
+          if (nft.data.image_url.includes("ipfs://")) {
+            return nft.data.image_url.replace(
+              "ipfs://",
+              "https://ipfs.moralis.io:2053/ipfs/"
+            );
+          } else {
+            return nft.data.image_url;
+          }
         }
       }
     },

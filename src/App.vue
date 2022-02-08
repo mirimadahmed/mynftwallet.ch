@@ -4,9 +4,16 @@
       <b-navbar toggleable="lg" type="dark" variant="info">
         <b-navbar-brand class="ms-3"> mynftwallet.ch </b-navbar-brand>
         <template v-if="isAuthenticated && user">
-          <b-button class="ms-auto mr-5" @click="logout"
-            >{{ address }}... Logout</b-button
-          >
+          <b-navbar-nav class="ms-auto">
+            <b-nav-item href="#">
+              <router-link :to="`/${user.ethAddress}`">
+                Wallet
+              </router-link>
+            </b-nav-item>
+            <b-button class="mr-5" @click="logout">
+              {{ address }}... Logout
+            </b-button>
+          </b-navbar-nav>
         </template>
         <template v-else>
           <b-button class="ms-auto mr-5" @click="login"
@@ -53,9 +60,6 @@ export default {
         this.$router.push(`/${user.get("ethAddress")}`);
       }
     },
-  },
-  mounted() {
-    this.handleCurrentUser();
   },
 };
 </script>
