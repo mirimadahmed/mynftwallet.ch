@@ -1,32 +1,23 @@
 <template>
   <div id="app">
     <div id="nav">
-      <b-navbar toggleable="lg" type="dark" variant="info">
-        <b-navbar-brand class="ms-3"> mynftwallet.ch </b-navbar-brand>
-        <template v-if="isAuthenticated && user">
-          <b-navbar-nav class="ms-auto">
-            <b-nav-item href="#">
-              <router-link :to="`/${user.ethAddress}`">
-                Wallet
-              </router-link>
-            </b-nav-item>
-            <b-button class="mr-5" @click="logout">
-              {{ address }}... Logout
-            </b-button>
-          </b-navbar-nav>
-        </template>
-        <template v-else>
-          <b-button class="ms-auto mr-5" @click="login"
-            >Connect wallet</b-button
-          >
-        </template>
-      </b-navbar>
+      <Navbar />
+    </div>
+    <div>
+      <Chains />
     </div>
     <router-view />
   </div>
 </template>
 <script>
+import Navbar from "@/components/Navbar.vue";
+import Chains from "@/components/Chains.vue";
+
 export default {
+  components: {
+    Navbar,
+    Chains
+  },
   computed: {
     isAuthenticated() {
       return this.$store.state.user !== null;
@@ -64,4 +55,7 @@ export default {
 };
 </script>
 <style>
+body, html {
+  background: #0E384F !important;
+}
 </style>

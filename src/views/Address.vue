@@ -1,11 +1,5 @@
 <template>
-  <div class="about">
-    <b-jumbotron
-      header="Multichain NFT Collections"
-      lead="Connect your wallet to and see all your nfts in one place."
-      class="bg-light p-5 m-0"
-    >
-    </b-jumbotron>
+  <div>
     <div class="row m-0 p-5">
       <b-tabs content-class="mt-3 text-center" justified>
         <template v-for="(chain, index) in chains">
@@ -95,6 +89,9 @@ export default {
   },
   methods: {
     getBalanaces() {
+      chains.forEach((chain) => {
+        this.$store.commit("setNFTs", { nfts: [], chain: chain });
+      });
       chains.forEach((chain) => {
         const options = { chain: chain, address: this.$route.params.address };
         Moralis.Web3API.account.getNFTs(options).then((res) => {

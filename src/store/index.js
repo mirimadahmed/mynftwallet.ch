@@ -15,7 +15,16 @@ const store = new Vuex.Store({
       "matic": [],
       "avalanche": [],
       "fantom": [],
+      "solana": []
     },
+    chains: [
+      "eth",
+      "bsc",
+      "matic",
+      "avalanche",
+      "fantom",
+      "solana"
+    ]
   },
   getters: {
     isLoggedIn(state) {

@@ -1,17 +1,26 @@
 <template>
   <div class="home">
-    <b-jumbotron
-      header="Multichain NFT Collections"
-      lead="Connect your wallet to and see all your nfts in one place."
-      class="bg-light p-5 m-0"
-    >
-    </b-jumbotron>
+    <Content v-if="user" />
+    <NotConnected v-else />
   </div>
 </template>
 
 <script>
+import NotConnected from "@/components/NotConnected.vue";
+import Content from "@/components/Content.vue";
 
 export default {
-  name: 'Home',
-}
+  name: "Home",
+  components: {
+    NotConnected,
+    Content
+  },
+  computed: {
+    user() {
+      return this.$store.state.user
+    }
+  }
+};
 </script>
+<style scoped>
+</style>
