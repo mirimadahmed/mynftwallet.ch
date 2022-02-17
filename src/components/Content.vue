@@ -124,6 +124,7 @@ export default {
                         });
                       })
                       .catch((err) => {
+                        console.log(err);
                         result.price = 0;
                         this.$store.commit("pushNFT", {
                           nft: result,
