@@ -10,6 +10,7 @@
   >
     <b-card-text>
       {{ nft.data.description && nft.data.description.substr(0, 15) }}...
+      Floor: {{ nft.price }}
     </b-card-text>
   </b-card>
 </template>
