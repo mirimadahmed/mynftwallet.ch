@@ -7,7 +7,7 @@
         :key="chain + 1"
         :class="nfts[chain].length > 0 && 'selected'"
       >
-        <img :src="`./assets/${chain}.png`" alt="" />
+        <img :src="`/assets/${chain}.png`" alt="" />
       </div>
     </div>
     <div class="row m-0 px-2 chains">
@@ -17,7 +17,7 @@
         :key="chain + 1"
         :class="nfts[chain].length > 0 && 'selected'"
       >
-        <img :src="`./assets/${chain}.png`" alt="" />
+        <img :src="`/assets/${chain}.png`" alt="" />
       </div>
     </div>
   </div>
@@ -27,7 +27,7 @@ export default {
   name: "Chains",
   computed: {
     chains() {
-      return this.$store.state.chains;
+      return ["Eth", "Polygon", "Ftm", "Bsc", "Avax"];
     },
     nfts() {
       return this.$store.state.nfts;
