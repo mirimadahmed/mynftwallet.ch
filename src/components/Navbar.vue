@@ -9,7 +9,12 @@
         <Button class="mr-5" text="DISCONNECT" @click="logout" />
       </b-navbar-nav>
       <b-navbar-nav class="ms-auto p-3 nav-mobile">
-        <img src="../assets/unlink.png" class="unlink-bg" alt="">
+        <img
+          src="../assets/unlink.png"
+          @click="logout"
+          class="unlink-bg"
+          alt=""
+        />
       </b-navbar-nav>
     </template>
   </b-navbar>
@@ -38,12 +43,19 @@ export default {
     async logout() {
       await this.$moralis.User.logOut();
       this.setUser(null);
+      this.$store.commit("flushNFTs");
+      this.$router.push("/");
     },
     handleCurrentUser() {
       const user = this.$moralis.User.current();
       if (user) {
         this.setUser({ ethAddress: user.get("ethAddress"), ...user });
         this.$router.push(`/wallet/${user.get("ethAddress")}`);
+      } else {
+        this.$moralis.authenticate().then((user) => {
+          this.setUser({ ethAddress: user.get("ethAddress"), ...user });
+          this.$router.push(`/wallet/${user.get("ethAddress")}`);
+        });
       }
     },
   },

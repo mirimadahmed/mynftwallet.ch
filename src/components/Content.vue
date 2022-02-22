@@ -17,7 +17,7 @@
     >
       <template v-if="nfts[chain].length > 0">
         <Section :chain="chain" />
-        <div class="row m-0 p-2">
+        <div class="row m-0 p-2 my-3">
           <div class="col-12 advert p-1">
             <span>Ad</span>
           </div>

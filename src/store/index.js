@@ -43,6 +43,16 @@ const store = new Vuex.Store({
     },
     pushNFT(state, payload) {
       state.nfts[payload.chain].push(payload.nft);
+    },
+    flushNFTs(state) {
+      state.nfts = {
+        "eth": [],
+        "bsc": [],
+        "matic": [],
+        "avalanche": [],
+        "fantom": [],
+        "solana": []
+      };
     }
   }
 })

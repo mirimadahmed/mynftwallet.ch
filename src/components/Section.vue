@@ -1,5 +1,5 @@
 <template>
-  <div class="row m-0 custom-bg">
+  <div class="row m-0 custom-bg" :class="`chain-${chain}`">
     <div class="col-12 px-3 pb-3 pt-5">
       <div class="row">
         <div class="col-4 col-md-2 m-auto base-row">

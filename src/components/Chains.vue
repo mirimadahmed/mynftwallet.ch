@@ -1,23 +1,31 @@
 <template>
   <div>
-    <div class="row m-0 px-2 chains-mobile">
+    <div v-if="user" class="row m-0 px-2 chains-mobile">
       <div
         class="col chain-mobile"
         v-for="chain in chains"
         :key="chain + 1"
         :class="nfts[chain].length > 0 && 'selected'"
       >
-        <img :src="`/assets/${chain}.png`" alt="" />
+        <img
+          @click="scrollToElement(chain)"
+          :src="`/assets/${chain}.png`"
+          alt=""
+        />
       </div>
     </div>
-    <div class="row m-0 px-2 chains">
+    <div v-if="user" class="row m-0 px-2 chains">
       <div
         class="col chain"
         v-for="chain in chains"
         :key="chain + 1"
         :class="nfts[chain].length > 0 && 'selected'"
       >
-        <img :src="`/assets/${chain}.png`" alt="" />
+        <img
+          @click="scrollToElement(chain)"
+          :src="`/assets/${chain}.png`"
+          alt=""
+        />
       </div>
     </div>
   </div>
@@ -31,6 +39,18 @@ export default {
     },
     nfts() {
       return this.$store.state.nfts;
+    },
+    user() {
+      return this.$store.state.user;
+    },
+  },
+  methods: {
+    scrollToElement(chain) {
+      const el = document.getElementsByClassName(`chain-${chain}`)[0]
+
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
     },
   },
 };
@@ -92,7 +112,7 @@ img {
     text-align: center;
     box-shadow: 0px 6px 5px 2px rgba(0, 0, 0, 0.25);
     border-radius: 0px 0px 5px 5px;
-    height: 44px !important;
+    height: 55px !important;
     margin-top: 0 !important;
     flex: 1;
     margin-right: 5px;
